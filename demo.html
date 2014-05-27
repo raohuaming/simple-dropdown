@@ -1,35 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>A simple tree plugin</title>
+	<title>A simple dropdown plugin</title>
 	<meta charset="utf-8" />
 
 	<link media="all" rel="stylesheet" type="text/css" href="vendor/bower/fontawesome/css/font-awesome.min.css" />
+	<link media="all" rel="stylesheet" type="text/css" href="vendor/bower/bootstrap/dist/css/bootstrap.min.css" />
 	<link media="all" rel="stylesheet" type="text/css" href="lib/dropdown.css" />
 	<style type="text/css" media="all">
 		body {
-			margin: 0;
+			margin: 40px;
 			padding: 0;
 		}
 
-		#console {
-			padding: 20px 0 0 20px;
-			border-top: 1px solid #cccccc;
-			line-height: 2;
-		}
 	</style>
 
 	<script type="text/javascript" src="vendor/bower/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="vendor/bower/simple-module/lib/module.js"></script>
+	<script type="text/javascript" src="vendor/bower/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="vendor/bower/ejs/ejs.min.js"></script>
 	<script type="text/javascript" src="lib/dropdown.js"></script>
 	<script type="text/javascript">
 		$(function() {
+        var data = [
+          {
+            label: '男',
+            value: 'male'
+          },
+          {
+            label: '女',
+            value: 'female'
+          },
+          {
+            label: '其他',
+            value: 'others'
+          }
+        ];
+        var dropdown = simple.dropdown({
+            el: "#dropdown",
+            items: data,
+            emptyText: false,
+            class: 'form-control',
+            selected: function(el, item){
+              alert('You have selected ' + JSON.stringify(item));
+            }
+          });
+
+        var dropdown1 = simple.dropdown({
+            el: "#dropdown1",
+            emptyText: 'haha',
+            url: "./demo.json",
+            params: { user: 'huaming' },
+            class: 'form-control',
+            selected: function(el, item){
+              console.log(item);
+            }
+          });
 		});
 	</script>
 
 </head>
 <body>
-	<div class="wrapper">
+	<div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-4">
+        <div id="dropdown"></div>
+        <div id="dropdown1"></div>
+      </div>
+    </div>
 	</div>
 </body>
 </html>
