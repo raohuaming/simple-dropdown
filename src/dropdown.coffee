@@ -4,18 +4,26 @@ class Dropdown extends Widget
     url: null
     items: []
     params: {}
-    height: 'auto'
-    emptyText: '点击选择'
-    class: ''
+    height: null
+    emptyText: null
     selected: $.noop
 
   @_tpl:
     """
-      <select height="<%= height %>" class="<%= classes %>">
+      <select style="display: none;">
         <% items.forEach(function(item) { %>
           <option value=<%= item.value %> ><%= item.label %></option>
         <% }) %>
       </select>
+      <div class="sdHolder">
+        <a class="sdToggle" href="#"></a>
+        <a class="sdSelector" href="#"><%= emptyText %></a>
+        <ul class="sdOptions" style="display: none; max-height: <%= height %>;">
+          <% items.forEach(function(item) { %>
+            <li><a href="#"><%= item.label %></a></li>
+          <% }) %>
+        </ul>
+      </div>
     """
 
   _init: () ->
@@ -28,6 +36,8 @@ class Dropdown extends Widget
       return
 
     @opts.items = $.extend([], @opts.items)
+    @opts.emptyText = @opts.emptyText || "请点击选择"
+    @opts.height = @opts.height || "#{5 * 30}px"
 
     @_render()
 
@@ -42,28 +52,40 @@ class Dropdown extends Widget
         data: @opts.params,
         success: (result) =>
           @opts.items = result
-          @opts.items.unshift({label: @opts.emptyText, value: null}) if @opts.emptyText
           @createDropdown @opts.items, @opts.selected
     else
-      @opts.items.unshift({label: @opts.emptyText, value: null}) if @opts.emptyText
       @createDropdown @opts.items, @opts.selected
 
   createDropdown: (items, callback) ->
-    @selectEl = ejs.render(Dropdown._tpl, { items: items, height: @opts.height, classes: @opts.class })
-    @selectEl = $(@selectEl).appendTo(@el)
+    @widgetEl = ejs.render(Dropdown._tpl, { items: items, emptyText: @opts.emptyText, height: @opts.height })
+    @widgetEl = $(@widgetEl).appendTo(@el)
+    selectEl = @selectEl = $(@el).find('select')
+    toggleEl = @toggleEl = $(@el).find('.sdToggle')
+    selectorEl = @selectorEl = $(@el).find('.sdSelector')
+    optionsEl = @optionsEl = $(@el).find('.sdOptions')
 
+    # bind data
     i = 0
-    $(@selectEl).find('option').each ->
+    $(optionsEl).find('li').each ->
       $(@).data('item', items[i])
       i += 1
-
-    $(@selectEl).change ->
-      $(@).find('option:selected').each ->
+      $(@).click ->
+        $(optionsEl).hide()
+        $(selectEl).val($(@).data('item').value)
+        $(selectorEl).text($(@).data('item').label)
         callback(@, $(@).data('item'))
 
+    $(@el).mouseleave ->
+      $(optionsEl).hide()
+
+    $(selectorEl).mouseenter =>
+      $(optionsEl).css('top', "#{$(selectorEl).height()}px")
+      $(optionsEl).toggle()
+      if $(window).height() - $(selectorEl).height() - $(selectorEl).offset().top < $(optionsEl).height()
+        $(optionsEl).css('top', "-#{$(optionsEl).height()}px")
 
   destroy: ->
-    @selectEl.remove()
+    @widgetEl.remove()
     @el.removeClass('simple-dropdown').removeData("dropdown")
 
 @simple ||= {}

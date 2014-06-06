@@ -29,18 +29,28 @@
       });
       return expect($(".simple-dropdown").length).toBe(1);
     });
-    it('should display exatly the items without emptyText', function() {
+    it('should generate a hidden select component using the items', function() {
       simple.dropdown({
         el: '#dropdown',
-        items: data,
-        emptyText: false
+        items: data
       });
-      return $('#dropdown option').each(function(index) {
+      $(dropdownEl).find('option').each(function(index) {
         expect($(this).text()).toEqual(data[index].label);
         return expect($(this).val()).toEqual(data[index].value);
       });
+      return expect($(dropdownEl).find('select').css('display')).toEqual('none');
     });
-    it('should append an empty option while providing emptyText', function() {
+    it('should generate a hidden ul waiting for displaying filled with the values of items', function() {
+      simple.dropdown({
+        el: '#dropdown',
+        items: data
+      });
+      $(dropdownEl).find('ul li').each(function(index) {
+        return expect($(this).text()).toEqual(data[index].label);
+      });
+      return expect($(dropdownEl).find('ul').css('display')).toEqual('none');
+    });
+    it('should show an empty option while providing emptyText', function() {
       var emptyOp, emptyText;
       emptyText = 'please choose';
       simple.dropdown({
@@ -48,7 +58,7 @@
         items: data,
         emptyText: emptyText
       });
-      emptyOp = $('#dropdown option')[0];
+      emptyOp = $(dropdownEl).find('a')[1];
       return expect($(emptyOp).text()).toEqual(emptyText);
     });
     it('should fetch items according to opts.url and params', function() {
@@ -60,13 +70,16 @@
         url: 'data.json',
         emptyText: false
       });
-      return $('#dropdown option').each(function(index) {
+      $(dropdownEl).find('options').each(function(index) {
         expect($(this).text()).toEqual(data[index].label);
         return expect($(this).val()).toEqual(data[index].value);
       });
+      return $(dropdownEl).find('ul li').each(function(index) {
+        return expect($(this).text()).toEqual(data[index].label);
+      });
     });
-    it('should call the selected callback while selecting any options', function() {
-      var callback, el;
+    it('should call the selected callback while selecting some option and set the value of the hidden select', function() {
+      var callback, selectedEl;
       callback = jasmine.createSpy('callback');
       simple.dropdown({
         el: '#dropdown',
@@ -74,20 +87,20 @@
         emptyText: false,
         selected: callback
       });
-      $('#dropdown select').val(data[1].value).trigger('change');
-      el = $('#dropdown option')[1];
-      return expect(callback).toHaveBeenCalledWith(el, data[1]);
+      selectedEl = $(dropdownEl).find('ul li')[1];
+      $(selectedEl).trigger('click');
+      expect(callback).toHaveBeenCalledWith(selectedEl, data[1]);
+      expect($(dropdown).find('select').val()).toEqual(data[1].value);
+      return expect($(dropdown).find('.sdSelector').text()).toEqual(data[1].label);
     });
-    it('should set the class name and height for select tag', function() {
+    it('should set max-height to options element by setting height', function() {
       simple.dropdown({
         el: '#dropdown',
         items: data,
         emptyText: false,
-        "class": 'myClass',
         height: '20px'
       });
-      expect(dropdownEl.find('select').attr('class')).toEqual('myClass');
-      return expect(dropdownEl.find('select').attr('height')).toEqual('20px');
+      return expect(dropdownEl.find('ul').css('max-height')).toEqual('20px');
     });
     return it('shuld destroy when call destroy()', function() {
       simple.dropdown({

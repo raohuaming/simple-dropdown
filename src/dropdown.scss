@@ -1,3 +1,117 @@
-.dropdown {
-  background-color: black;
+@CHARSET "UTF-8";
+
+$border-color: #515151;
+$line-height: 30px;
+
+.simple-dropdown {
+  .sdHolder {
+    background-color: #dfdfdf;
+    border: solid 1px $border-color;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    height: $line-height;
+    position: relative;
+    width: 200px;
+    &:focus! .sdSelector {}
+  }
+
+  .sdSelector {
+    display: block;
+    height: $line-height;
+    left: 0;
+    line-height: $line-height;
+    outline: none;
+    overflow: hidden;
+    position: absolute;
+    text-indent: 10px;
+    top: 0;
+    width: 170px;
+    &:link, &:visited, &:hover {
+      color: black;
+      outline: none;
+      text-decoration: none;
+    }
+  }
+
+  .sdToggle {
+    background: url(img/select-icons.png) 0 -116px no-repeat;
+    display: block;
+    height: $line-height;
+    outline: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: $line-height;
+    /*&:hover {*/
+      /*background: url(../img/select-icons.png) 0 -167px no-repeat;*/
+    /*}*/
+  }
+
+  .sdToggleOpen {
+    background: url(img/select-icons.png) 0 -16px no-repeat;
+    &:hover {
+      background: url(img/select-icons.png) 0 -66px no-repeat;
+    }
+  }
+
+  .sdHolderDisabled {
+    background-color: #3C3C3C;
+    border: solid 1px $border-color;
+    .sdHolder!, .sdToggle! {}
+  }
+
+  .sdOptions {
+    background-color: #fff;
+    border: solid 1px $border-color;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.20);
+    list-style: none;
+    left: -1px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 200px;
+    top: $line-height;
+    z-index: 1;
+    overflow-y: auto;
+    li {
+      padding: 0 7px;
+      &:hover, &:focus, &.sdFocus {
+        background-color: #efefef;
+      }
+    }
+    a {
+      border-bottom: dotted 1px $border-color;
+      display: block;
+      outline: none;
+      padding: 7px 0 7px 3px;
+      color: black;
+      &:link, &:visited {
+        text-decoration: none;
+      }
+      &:hover, &:focus, &.sdFocus {
+        /*color: #EBB52D;*/
+      }
+    }
+    li.last a {
+      border-bottom: none;
+    }
+    .sdDisabled {
+      border-bottom: dotted 1px $border-color;
+      color: #999;
+      display: block;
+      padding: 7px 0 7px 3px;
+    }
+    .sdGroup {
+      border-bottom: dotted 1px $border-color;
+      color: #EBB52D;
+      display: block;
+      font-weight: bold;
+      padding: 7px 0 7px 3px;
+    }
+    .sdSub {
+      padding-left: 17px;
+    }
+  }
+
 }
